@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amarine — Water Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #040d12;
+    --abyss: #07111a;
+    --slate: #0d1e2b;
+    --mid: #122433;
+    --surface: #162d3d;
+    --teal-glow: #00c4a0;
+    --teal-dim: #009e82;
+    --teal-faint: rgba(0, 196, 160, 0.08);
+    --teal-line: rgba(0, 196, 160, 0.2);
+    --amber: #e8a04a;
+    --text-primary: #e8f4ef;
+    --text-secondary: #8ab4a8;
+    --text-muted: #4a7066;
+    --border: rgba(0, 196, 160, 0.12);
+    --serif: 'Playfair Display', Georgia, serif;
+    --mono: 'DM Mono', 'Courier New', monospace;
+    --sans: 'Outfit', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--deep);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.4rem 4rem;
+    background: linear-gradient(to bottom, rgba(4,13,18,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(2px);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .nav-logo-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-logo-text {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: 0.02em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--teal-glow); }
+
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--teal-line);
+    color: var(--teal-glow);
+    padding: 0.55rem 1.4rem;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .nav-cta:hover {
+    background: var(--teal-faint);
+    border-color: var(--teal-glow);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-bg canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Radial depth gradient */
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0,196,160,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 20% 80%, rgba(0,100,80,0.08) 0%, transparent 60%),
+      linear-gradient(to bottom, transparent 60%, var(--deep) 100%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 300;
+    color: var(--teal-glow);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--teal-glow);
+  }
+
+  .hero-headline {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 5vw, 4.2rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 1.6rem;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--teal-glow);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.75;
+    margin-bottom: 2.8rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--teal-glow);
+    color: var(--deep);
+    border: none;
+    padding: 0.85rem 2rem;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background: #00e0b8;
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: 0.85rem 0;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 300;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+  }
+
+  .btn-ghost:hover { color: var(--text-primary); }
+
+  .btn-ghost svg { transition: transform 0.2s; }
+  .btn-ghost:hover svg { transform: translateX(4px); }
+
+  .hero-stat-strip {
+    position: absolute;
+    bottom: 3rem;
+    left: 4rem;
+    right: 4rem;
+    z-index: 1;
+    display: flex;
+    gap: 3rem;
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .hero-stat-num {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .hero-stat-num span {
+    color: var(--teal-glow);
+    font-size: 1.1rem;
+  }
+
+  .hero-stat-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 4rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 300;
+    color: var(--teal-dim);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--teal-dim);
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(1.9rem, 3vw, 2.6rem);
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.25;
+    margin-bottom: 1rem;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--teal-glow);
+  }
+
+  .section-body {
+    font-size: 0.97rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.8;
+  }
+
+  /* ── PROBLEM SECTION ── */
+  .problem {
+    padding: 7rem 0;
+    background: var(--abyss);
+  }
+
+  .problem-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .problem-right {
+    padding-top: 1rem;
+  }
+
+  .problem-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .problem-card {
+    background: var(--slate);
+    padding: 1.6rem 1.8rem;
+    border-left: 2px solid transparent;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .problem-card:hover {
+    border-left-color: var(--teal-glow);
+    background: var(--mid);
+  }
+
+  .problem-card-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+  }
+
+  .problem-card-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+
+  .problem-card-body {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+
+  .problem-callout {
+    margin-top: 2.5rem;
+    background: linear-gradient(135deg, rgba(0,196,160,0.07) 0%, transparent 100%);
+    border: 1px solid var(--teal-line);
+    padding: 1.6rem 1.8rem;
+  }
+
+  .problem-callout-num {
+    font-family: var(--serif);
+    font-size: 3rem;
+    font-weight: 400;
+    color: var(--teal-glow);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .problem-callout-text {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ── PRODUCT ── */
+  .product {
+    padding: 7rem 0;
+    background: var(--deep);
+  }
+
+  .product-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    margin-bottom: 5rem;
+    align-items: center;
+  }
+
+  .product-modules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .module-card {
+    background: var(--deep);
+    padding: 2.2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .module-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: transparent;
+    transition: background 0.3s;
+  }
+
+  .module-card:hover {
+    background: var(--slate);
+  }
+
+  .module-card:hover::before {
+    background: var(--teal-glow);
+  }
+
+  .module-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1.2rem;
+    color: var(--teal-glow);
+  }
+
+  .module-name {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .module-tag {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    margin-bottom: 0.8rem;
+  }
+
+  .module-desc {
+    font-size: 0.84rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ── PIPELINE VIZ ── */
+  .pipeline {
+    padding: 5rem 0 7rem;
+    background: var(--abyss);
+    overflow: hidden;
+  }
+
+  .pipeline-header {
+    margin-bottom: 4rem;
+    max-width: 500px;
+  }
+
+  .pipeline-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .pipeline-step {
+    flex: 1;
+    min-width: 160px;
+    padding: 1.8rem 1.5rem;
+    background: var(--slate);
+    position: relative;
+    border-top: 2px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  .pipeline-step:hover {
+    border-top-color: var(--teal-glow);
+    background: var(--mid);
+  }
+
+  .pipeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 14px solid var(--slate);
+    z-index: 2;
+    transition: border-left-color 0.3s;
+  }
+
+  .pipeline-step:hover:not(:last-child)::after {
+    border-left-color: var(--mid);
+  }
+
+  .pipeline-step-num {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.8rem;
+  }
+
+  .pipeline-step-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .pipeline-step-body {
+    font-size: 0.78rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ── METRICS RIBBON ── */
+  .metrics {
+    padding: 4rem 0;
+    background: var(--slate);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .metrics-inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+  }
+
+  .metric-item {
+    padding: 1.5rem 2rem;
+    border-right: 1px solid var(--border);
+    text-align: left;
+  }
+
+  .metric-item:last-child { border-right: none; }
+
+  .metric-num {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--teal-glow);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .metric-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── APPROACH ── */
+  .approach {
+    padding: 7rem 0;
+    background: var(--deep);
+  }
+
+  .approach-inner {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .approach-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .approach-step {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .approach-step:first-child { border-top: 1px solid var(--border); }
+
+  .approach-step-index {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--teal-dim);
+    letter-spacing: 0.15em;
+    min-width: 32px;
+    padding-top: 0.15rem;
+  }
+
+  .approach-step-content {}
+
+  .approach-step-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+  }
+
+  .approach-step-body {
+    font-size: 0.84rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .approach-right {
+    padding-top: 1rem;
+    position: sticky;
+    top: 8rem;
+  }
+
+  .approach-callout-box {
+    background: var(--abyss);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .approach-callout-box .label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    margin-bottom: 0.8rem;
+  }
+
+  .approach-callout-box p {
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .tech-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border: 1px solid rgba(0,196,160,0.15);
+    padding: 0.3rem 0.7rem;
+  }
+
+  /* ── FOUNDER ── */
+  .founder {
+    padding: 7rem 0;
+    background: var(--abyss);
+  }
+
+  .founder-inner {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .founder-portrait {
+    position: sticky;
+    top: 8rem;
+  }
+
+  .founder-portrait-frame {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: var(--slate);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .founder-portrait-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 40% 30%, rgba(0,196,160,0.08) 0%, transparent 70%),
+      linear-gradient(to bottom, transparent 60%, var(--abyss) 100%);
+    z-index: 1;
+  }
+
+  .founder-initials {
+    font-family: var(--serif);
+    font-size: 5rem;
+    font-weight: 400;
+    color: rgba(0,196,160,0.15);
+    letter-spacing: 0.1em;
+    user-select: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  .founder-name-tag {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 3;
+    padding: 1.2rem;
+    background: linear-gradient(to top, rgba(7,17,26,0.9) 0%, transparent 100%);
+  }
+
+  .founder-name {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .founder-role {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    margin-top: 0.2rem;
+  }
+
+  .founder-content {}
+
+  .founder-quote {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 2.5rem;
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--teal-glow);
+  }
+
+  .founder-bio {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .founder-bio + .founder-bio {
+    margin-top: 1rem;
+  }
+
+  .founder-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .founder-link {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+  }
+
+  .founder-link:hover {
+    color: var(--teal-glow);
+    border-bottom-color: var(--teal-glow);
+  }
+
+  /* ── CONTACT ── */
+  .contact {
+    padding: 7rem 0;
+    background: var(--deep);
+  }
+
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+
+  .contact-left {}
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .form-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .form-input, .form-select, .form-textarea {
+    background: var(--abyss);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 300;
+    padding: 0.85rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .form-input::placeholder, .form-textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--teal-dim);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .form-select {
+    cursor: pointer;
+  }
+
+  .form-submit {
+    background: var(--teal-glow);
+    color: var(--deep);
+    border: none;
+    padding: 1rem 2rem;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.2s;
+    align-self: flex-start;
+    margin-top: 0.5rem;
+  }
+
+  .form-submit:hover {
+    background: #00e0b8;
+  }
+
+  .contact-info {
+    padding-top: 1.5rem;
+  }
+
+  .contact-info-item {
+    padding: 1.4rem 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .contact-info-item:first-child { border-top: 1px solid var(--border); }
+
+  .contact-info-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .contact-info-value {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  .contact-info-value a {
+    color: var(--teal-dim);
+    text-decoration: none;
+  }
+
+  .contact-info-value a:hover {
+    color: var(--teal-glow);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 3rem 4rem;
+    background: var(--abyss);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .footer-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+  }
+
+  .footer-tagline {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  .footer-right {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--deep); }
+  ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 2rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 2rem 3rem; }
+    .hero-stat-strip { left: 2rem; right: 2rem; flex-wrap: wrap; gap: 1.5rem; }
+    .container { padding: 0 2rem; }
+    .problem-inner, .product-intro, .approach-inner,
+    .founder-inner, .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .product-modules { grid-template-columns: 1fr; }
+    .metrics-inner { grid-template-columns: 1fr 1fr; }
+    .pipeline-step:not(:last-child)::after { display: none; }
+    footer { flex-direction: column; align-items: flex-start; padding: 2rem; }
+    .approach-right { position: static; }
+    .founder-portrait { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg class="nav-logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 4 C10 4, 4 9, 4 16 C4 21, 7 25, 12 27 C12 27, 10 22, 12 18 C14 14, 18 14, 20 18 C22 22, 20 27, 20 27 C25 25, 28 21, 28 16 C28 9, 22 4, 16 4 Z" stroke="#00c4a0" stroke-width="1.2" fill="none"/>
+      <path d="M16 10 C14 13, 12 14, 12 18" stroke="#00c4a0" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+      <circle cx="16" cy="20" r="1.5" fill="#00c4a0"/>
+    </svg>
+    <span class="nav-logo-text">amarine</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#product">Platform</a></li>
+    <li><a href="#approach">How It Works</a></li>
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Request Access</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <canvas id="flowCanvas"></canvas>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Water intelligence platform</div>
+    <h1 class="hero-headline">
+      The pipes are telling you<br>
+      something. <em>We translate.</em>
+    </h1>
+    <p class="hero-sub">
+      Amarine brings AI-native intelligence to municipal water infrastructure — detecting leaks before they surface, predicting contamination events, and optimising treatment in real time.
+    </p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Request a Demo</a>
+      <a href="#product" class="btn-ghost">
+        See the platform
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-stat-strip">
+    <div class="hero-stat">
+      <div class="hero-stat-num">30<span>%</span></div>
+      <div class="hero-stat-label">avg. water lost to leaks</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">$7.6<span>B</span></div>
+      <div class="hero-stat-label">annual NRW cost, US alone</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">93<span>%</span></div>
+      <div class="hero-stat-label">AI detection accuracy</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">1<span>:</span>2</div>
+      <div class="hero-stat-label">water main break frequency (min)</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="problem-inner">
+      <div class="problem-left">
+        <p class="section-label reveal">The infrastructure gap</p>
+        <h2 class="section-title reveal reveal-delay-1">The grid that<br>keeps cities alive<br><em>is running blind.</em></h2>
+        <p class="section-body reveal reveal-delay-2">
+          Water utilities manage tens of thousands of kilometres of buried pipe, but most of that network is monitored with tools designed before the internet existed. Operators make decisions from lagging data, paper logs, and guesswork.
+        </p>
+        <div class="problem-callout reveal reveal-delay-3">
+          <div class="problem-callout-num">$2B+</div>
+          <div class="problem-callout-text">lost annually to non-revenue water in the US — treated, pumped, and chemically processed water that generates zero revenue for the utility.</div>
+        </div>
+      </div>
+      <div class="problem-right">
+        <div class="problem-cards">
+          <div class="problem-card reveal">
+            <div class="problem-card-num">01 / LEAK DETECTION</div>
+            <div class="problem-card-title">Leaks stay hidden for months</div>
+            <div class="problem-card-body">Traditional walking surveys catch less than half of active leaks. Most are discovered when they surface — by which point thousands of litres have been lost and road damage is already underway.</div>
+          </div>
+          <div class="problem-card reveal reveal-delay-1">
+            <div class="problem-card-num">02 / CONTAMINATION</div>
+            <div class="problem-card-title">No advance warning of quality events</div>
+            <div class="problem-card-body">Contamination events are reactive. Utilities sample periodically; the window between a pressure drop, backflow, or chemical intrusion and a public health alert is days — not hours.</div>
+          </div>
+          <div class="problem-card reveal reveal-delay-2">
+            <div class="problem-card-num">03 / TREATMENT</div>
+            <div class="problem-card-title">Treatment plants running on fixed schedules</div>
+            <div class="problem-card-body">Chemical dosing, filtration cycles, and energy consumption are tuned quarterly at best. Dynamic demand, seasonal inflow, and variable raw water quality are handled manually.</div>
+          </div>
+          <div class="problem-card reveal reveal-delay-3">
+            <div class="problem-card-num">04 / FLOODING</div>
+            <div class="problem-card-title">Early warning comes too late</div>
+            <div class="problem-card-body">Stormwater overflow events and combined sewer flooding cause millions in infrastructure damage each year. Most systems lack the sensor density and predictive models to act before the threshold is breached.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="product" id="product">
+  <div class="container">
+    <div class="product-intro">
+      <div>
+        <p class="section-label reveal">The Amarine Platform</p>
+        <h2 class="section-title reveal reveal-delay-1">One intelligence layer.<br><em>Four critical systems.</em></h2>
+        <p class="section-body reveal reveal-delay-2">
+          Amarine integrates with your existing SCADA, AMI meters, and IoT sensor arrays — adding a predictive AI layer that reasons across the entire network in real time.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <p class="section-body">
+          Built specifically for municipal utilities. No rip-and-replace. No 18-month deployment timelines. Amarine is deployable alongside legacy infrastructure and is designed to meet the regulatory, audit, and procurement requirements water authorities operate under.
+        </p>
+        <div class="tech-tags" style="margin-top: 1.5rem;">
+          <span class="tech-tag">SCADA Integration</span>
+          <span class="tech-tag">AMI / Smart Meter</span>
+          <span class="tech-tag">IoT Sensor Network</span>
+          <span class="tech-tag">DMA Analysis</span>
+          <span class="tech-tag">REST API</span>
+          <span class="tech-tag">On-Premise Available</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-modules reveal">
+      <!-- LeakPulse -->
+      <div class="module-card">
+        <svg class="module-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6 C16 12, 10 16, 10 24 C10 30, 14 34, 20 34 C26 34, 30 30, 30 24 C30 16, 24 12, 20 6Z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <path d="M14 26 C15 22, 17 20, 20 20" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+          <circle cx="20" cy="28" r="2" fill="currentColor" opacity="0.8"/>
+        </svg>
+        <div class="module-tag">Leak Intelligence</div>
+        <div class="module-name">LeakPulse</div>
+        <div class="module-desc">
+          Continuous acoustic and pressure analysis across district metered areas. Detects leaks within 1–3 days of onset — not months. Pinpoints location to within metres, eliminating speculative excavation.
+        </div>
+      </div>
+
+      <!-- AquaGuard -->
+      <div class="module-card">
+        <svg class="module-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="12" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <path d="M14 20 L18 24 L26 16" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M20 8 L20 12 M20 28 L20 32 M8 20 L12 20 M28 20 L32 20" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+        <div class="module-tag">Water Quality</div>
+        <div class="module-name">AquaGuard</div>
+        <div class="module-desc">
+          Multi-parameter quality monitoring paired with contamination propagation modelling. Detects anomalies hours before they manifest at the customer tap, with automated regulatory alert routing.
+        </div>
+      </div>
+
+      <!-- FlowMind -->
+      <div class="module-card">
+        <svg class="module-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="22" width="6" height="10" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <rect x="17" y="16" width="6" height="16" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <rect x="26" y="10" width="6" height="22" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <path d="M8 20 C12 14, 18 12, 24 8" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-dasharray="2 2" opacity="0.5"/>
+        </svg>
+        <div class="module-tag">Treatment Optimisation</div>
+        <div class="module-name">FlowMind</div>
+        <div class="module-desc">
+          Adaptive treatment plant intelligence. Dynamically optimises chemical dosing, filtration cycles, and energy consumption based on real-time inflow quality, demand forecasts, and regulatory thresholds.
+        </div>
+      </div>
+
+      <!-- StormSense -->
+      <div class="module-card">
+        <svg class="module-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 18 C10 13, 14 10, 19 11 C19 11, 20 6, 26 8 C30 9, 32 13, 30 17 L10 18Z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <path d="M16 22 L14 28 M21 22 L19 28 M26 22 L24 28" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M14 30 L18 26 M19 30 L23 26" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+        </svg>
+        <div class="module-tag">Flood Early Warning</div>
+        <div class="module-name">StormSense</div>
+        <div class="module-desc">
+          Hydrological AI combining weather feeds, catchment topography, sewer capacity, and historical event data. Issues flood warnings 6–18 hours ahead, with actionable diversion and response protocols.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section class="pipeline" id="approach">
+  <div class="container">
+    <div class="pipeline-header">
+      <p class="section-label reveal">Data to action</p>
+      <h2 class="section-title reveal reveal-delay-1">How Amarine<br><em>sees your network</em></h2>
+    </div>
+    <div class="pipeline-flow reveal">
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">STEP 01</div>
+        <div class="pipeline-step-title">Sensor Ingestion</div>
+        <div class="pipeline-step-body">Pressure loggers, acoustic sensors, AMI meters, SCADA feeds, and weather APIs stream into a unified data layer.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">STEP 02</div>
+        <div class="pipeline-step-title">Network Modelling</div>
+        <div class="pipeline-step-body">Hydraulic and topological models build a live digital twin of the distribution network.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">STEP 03</div>
+        <div class="pipeline-step-title">Anomaly Detection</div>
+        <div class="pipeline-step-body">Machine learning models identify deviation from expected baselines, scored by probability and severity.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">STEP 04</div>
+        <div class="pipeline-step-title">Predictive Reasoning</div>
+        <div class="pipeline-step-body">Events are classified, geolocated, and cross-referenced against maintenance history, pipe age, and material.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">STEP 05</div>
+        <div class="pipeline-step-title">Operator Action</div>
+        <div class="pipeline-step-body">Prioritised work orders are issued directly to field crews with mapped locations and remediation guidance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics">
+  <div class="container">
+    <div class="metrics-inner">
+      <div class="metric-item reveal">
+        <div class="metric-num">93%</div>
+        <div class="metric-label">Leak detection accuracy</div>
+      </div>
+      <div class="metric-item reveal reveal-delay-1">
+        <div class="metric-num">50%</div>
+        <div class="metric-label">NRW reduction potential</div>
+      </div>
+      <div class="metric-item reveal reveal-delay-2">
+        <div class="metric-num">18hr</div>
+        <div class="metric-label">Flood early warning window</div>
+      </div>
+      <div class="metric-item reveal reveal-delay-3">
+        <div class="metric-num">&lt;8wk</div>
+        <div class="metric-label">Typical deployment timeline</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="approach">
+  <div class="container">
+    <div class="approach-inner">
+      <div class="approach-left">
+        <p class="section-label reveal">Our architecture</p>
+        <h2 class="section-title reveal reveal-delay-1">Built to fit the<br>world utilities<br><em>actually live in.</em></h2>
+        <div class="approach-steps" style="margin-top: 2.5rem;">
+          <div class="approach-step reveal">
+            <div class="approach-step-index">01</div>
+            <div class="approach-step-content">
+              <div class="approach-step-title">No-displacement integration</div>
+              <div class="approach-step-body">Amarine connects alongside existing SCADA, GIS, and billing systems. We add intelligence without requiring utilities to retire legacy infrastructure — capital programs that stall deals are not part of our model.</div>
+            </div>
+          </div>
+          <div class="approach-step reveal">
+            <div class="approach-step-index">02</div>
+            <div class="approach-step-content">
+              <div class="approach-step-title">Regulatory-grade audit trails</div>
+              <div class="approach-step-body">Every detection, alert, and recommendation is fully logged with timestamps, confidence scores, and supporting data. Built to satisfy EPA, DWI, and Ofwat audit requirements from day one.</div>
+            </div>
+          </div>
+          <div class="approach-step reveal">
+            <div class="approach-step-index">03</div>
+            <div class="approach-step-content">
+              <div class="approach-step-title">Sector-specific AI, not generic ML</div>
+              <div class="approach-step-body">Models are trained on water network data — acoustic leak signatures, hydraulic pressure profiles, treatment chemistry behaviour. Not repurposed industrial IoT platforms fitted with a water skin.</div>
+            </div>
+          </div>
+          <div class="approach-step reveal">
+            <div class="approach-step-index">04</div>
+            <div class="approach-step-content">
+              <div class="approach-step-title">Sovereign deployment options</div>
+              <div class="approach-step-body">For utilities with data sovereignty requirements, Amarine deploys on-premise or in a dedicated private cloud environment. Network telemetry never leaves the utility's control perimeter.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="approach-right">
+        <div class="approach-callout-box reveal">
+          <div class="label">Why now</div>
+          <p>Water utilities are facing a convergence of pressure: ageing infrastructure, climate volatility, tightening regulation, and stretched maintenance budgets. The technology to address all four exists — what's been missing is a platform that makes it deployable inside procurement-constrained public institutions.</p>
+        </div>
+        <div class="approach-callout-box reveal reveal-delay-1">
+          <div class="label">Market context</div>
+          <p>Global water utility software is a $4B+ market growing at 9% annually. The average utility still runs on systems from the 1990s. Less than 15% of municipal networks have deployed any form of continuous acoustic monitoring.</p>
+        </div>
+        <div class="approach-callout-box reveal reveal-delay-2">
+          <div class="label">Our edge</div>
+          <p>We go below the surface where traditional survey crews stop. Acoustic ML models trained on two million+ signatures. Real-time DMA minimum night flow analysis. And a field-operations layer that turns detections into crew-ready work orders within minutes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder" id="founder">
+  <div class="container">
+    <div class="founder-inner">
+      <div class="founder-portrait">
+        <div class="founder-portrait-frame">
+          <div class="founder-initials">AS</div>
+          <div class="founder-name-tag">
+            <div class="founder-name">Aakarshan Saxena</div>
+            <div class="founder-role">Founder & CEO · Amarine</div>
+          </div>
+        </div>
+        <div class="founder-links" style="margin-top: 1rem;">
+          <a href="mailto:hello@amarine.io" class="founder-link">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 3l5 3.5L11 3M1 3h10v7H1V3z" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Email
+          </a>
+          <a href="#" class="founder-link">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1"/><path d="M4 5v4M4 3.5v.5M8 9V6.5c0-1-1.5-1-1.5 0" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+
+      <div class="founder-content">
+        <p class="section-label reveal">Founder</p>
+        <blockquote class="founder-quote reveal reveal-delay-1">
+          "Water infrastructure is the most critical system most people never think about — until the day it fails."
+        </blockquote>
+        <p class="founder-bio reveal reveal-delay-2">
+          Aakarshan Saxena founded Amarine with a conviction that the water sector's technology gap is not an unsolvable problem — it is an unsolved one. Having studied the technical and institutional dynamics of water utilities across South Asia, Europe, and North America, he identified a consistent pattern: the data exists, the sensors exist, but the intelligence layer that turns network signals into operator decisions has been absent.
+        </p>
+        <p class="founder-bio reveal reveal-delay-3">
+          Amarine is the system Aakarshan set out to build: one that meets utilities where they are — on 30-year procurement cycles, with 1990s-era SCADA systems and teams stretched across thousands of miles of pipe — and makes AI-grade water intelligence deployable within months, not years.
+        </p>
+        <p class="founder-bio reveal reveal-delay-4">
+          His focus is on the intersection of machine learning and physical infrastructure, with particular depth in acoustic signal processing for subsurface anomaly detection and hydraulic network modelling for large-scale distribution systems. He believes the hardest part of modernising critical infrastructure is not the technology — it is building the institutional trust to use it.
+        </p>
+        <div class="tech-tags reveal" style="margin-top: 2rem;">
+          <span class="tech-tag">Hydraulic Engineering</span>
+          <span class="tech-tag">Acoustic ML</span>
+          <span class="tech-tag">Municipal Utilities</span>
+          <span class="tech-tag">IoT Infrastructure</span>
+          <span class="tech-tag">B2B SaaS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="contact-inner">
+      <div class="contact-left">
+        <p class="section-label reveal">Get in touch</p>
+        <h2 class="section-title reveal reveal-delay-1">Let's talk about<br>your <em>network.</em></h2>
+        <p class="section-body reveal reveal-delay-2" style="margin-bottom: 2rem;">
+          We work directly with water utilities, municipal authorities, and infrastructure investors. Tell us about your network and we'll configure a pilot proposal within two weeks.
+        </p>
+
+        <div class="contact-info reveal reveal-delay-3">
+          <div class="contact-info-item">
+            <div class="contact-info-label">General Enquiries</div>
+            <div class="contact-info-value"><a href="mailto:hello@amarine.io">hello@amarine.io</a></div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-info-label">Pilot Programme</div>
+            <div class="contact-info-value"><a href="mailto:pilots@amarine.io">pilots@amarine.io</a></div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-info-label">Investment & Partnerships</div>
+            <div class="contact-info-value"><a href="mailto:invest@amarine.io">invest@amarine.io</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-right reveal reveal-delay-2">
+        <form class="contact-form" onsubmit="return false;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Organisation</label>
+            <input type="text" class="form-input" placeholder="Water utility or organisation">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="you@organisation.gov">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Network Size</label>
+            <select class="form-select">
+              <option value="" disabled selected style="color: #4a7066;">Select your network size</option>
+              <option>Under 100km of mains</option>
+              <option>100–500km</option>
+              <option>500km–2,000km</option>
+              <option>2,000km+</option>
+              <option>Regional / national authority</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message</label>
+            <textarea class="form-textarea" placeholder="Tell us about your infrastructure challenges..."></textarea>
+          </div>
+          <button class="form-submit" type="submit">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <span class="footer-logo">amarine</span>
+    <div class="footer-divider"></div>
+    <span class="footer-tagline">Water Intelligence Platform</span>
+  </div>
+  <div class="footer-right">© 2025 Amarine Technologies · All rights reserved</div>
+</footer>
+
+<script>
+// ── FLOW CANVAS ANIMATION ──
+(function() {
+  const canvas = document.getElementById('flowCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], frame = 0;
+
+  function resize() {
+    W = canvas.width = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  }
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+
+  function init() {
+    resize();
+    particles = [];
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: rnd(0, W),
+        y: rnd(0, H),
+        vx: rnd(-0.3, 0.3),
+        vy: rnd(-0.1, 0.1),
+        r: rnd(1, 3),
+        a: rnd(0.02, 0.12),
+        life: rnd(0, Math.PI * 2)
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    frame++;
+
+    // Flow lines
+    ctx.save();
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.life += 0.008;
+      p.x += p.vx + Math.sin(p.life * 0.7 + i) * 0.15;
+      p.y += p.vy + Math.cos(p.life * 0.5 + i * 0.3) * 0.08;
+
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+
+      // Draw particle
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,196,160,${p.a * (0.5 + 0.5 * Math.sin(p.life))})`;
+      ctx.fill();
+
+      // Connect nearby particles
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(0,196,160,${0.04 * (1 - dist/120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+    ctx.restore();
+
+    // Subtle wave lines
+    for (let w = 0; w < 3; w++) {
+      ctx.beginPath();
+      const yBase = H * (0.35 + w * 0.15);
+      ctx.moveTo(0, yBase);
+      for (let x = 0; x <= W; x += 4) {
+        const y = yBase
+          + Math.sin((x / W * Math.PI * 4) + frame * 0.005 + w * 1.2) * 18
+          + Math.sin((x / W * Math.PI * 6) + frame * 0.008 + w * 0.8) * 8;
+        ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = `rgba(0,196,160,${0.03 - w * 0.008})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', init);
+  init();
+  draw();
+})();
+
+// ── SCROLL REVEAL ──
+(function() {
+  const els = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => observer.observe(el));
+})();
+
+// ── NAV SCROLL STATE ──
+(function() {
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      nav.style.background = 'rgba(4,13,18,0.97)';
+      nav.style.backdropFilter = 'blur(8px)';
+    } else {
+      nav.style.background = 'linear-gradient(to bottom, rgba(4,13,18,0.95) 0%, transparent 100%)';
+      nav.style.backdropFilter = 'blur(2px)';
+    }
+  });
+})();
+</script>
+</body>
+</html>
